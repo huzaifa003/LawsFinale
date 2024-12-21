@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask API Tester</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2rem;
+            color: #007BFF;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 1.5rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            resize: none;
+            box-sizing: border-box;
+        }
+        button {
+            display: inline-block;
+            background-color: #007BFF;
+            color: #fff;
+            font-size: 1rem;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+        }
+        .error {
+            color: #d9534f;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.85rem;
+            color: #777;
+        }
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flask API Tester</h1>
+
+        <h2>Query System</h2>
+        <form id="query-form">
+            <label for="query">Enter your query:</label>
+            <textarea id="query" placeholder="Type your query here..."></textarea><br>
+            <button type="button" onclick="querySystem()">Submit Query</button>
+        </form>
+        <div id="query-response" class="response"></div>
+    </div>
+
+    <footer>
+        &copy; 2024 Flask API Tester. Designed with care.
+    </footer>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+
+        async function querySystem() {
+            const query = document.getElementById('query').value.trim();
+
+            if (!query) {
+                alert('Query cannot be empty. Please provide input.');
+                return;
+            }
+
+            document.getElementById('query-response').innerText = 'Loading...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/query`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                document.getElementById('query-response').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('query-response').innerHTML = `<span class="error">Error: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
